@@ -1,0 +1,292 @@
+#복습
+#991101-1815311
+SELECT '991101-', RPAD('991101-',14,'*') FROM DUAL;
+#'HELLO' 소문자로 변경해 주세요.
+SELECT LOWER('HELLO') FROM DUAL;
+#'안녕' 문자열의 길이와 바이트 크기를 알려주세요.
+SELECT LENGTH('안녕'), LENGTHB('안녕') FROM DUAL;
+
+#P150 SQL 날짜함수들...
+SELECT * FROM EMP;
+SELECT ENAME, HIREDATE FROM EMP;
+DESC EMP;
+
+#SYSDATE
+SELECT SYSDATE AS NOW, SYSDATE - 1 AS 어제, SYSDATE+1 AS 내일 FROM DUAL;
+
+#ADD_MONTHS
+#3개월 후의 날짜는??
+SELECT SYSDATE, ADD_MONTHS(SYSDATE, 3) FROM DUAL;
+#입사 10주년이 되는 사원들의 데이터는?
+SELECT EMPNO, ENAME, HIREDATE,
+        ADD_MONTHS(HIREDATE, 120) AS WORK10YEAR
+        FROM EMP;
+#입사 32년 미만인 사원 데이터 출력하기
+SELECT EMPNO, ENAME, HIREDATE, SYSDATE, ADD_MONTHS(HIREDATE, 500) FROM EMP
+WHERE ADD_MONTHS(HIREDATE, 500) > SYSDATE;
+#SYSDATE와 ADD_MONTHS 함수를 사용하여 현재 날짜와 6개월 후 날짜가 출력되도록 하시오
+SELECT SYSDATE, ADD_MONTHS(SYSDATE, 6) FROM DUAL;
+
+#두 날짜 간의 개월 수 차이를 구하는 함수 (MONTHS_BETWEEN)
+SELECT EMPNO, ENAME, HIREDATE, 
+       ROUND(MONTHS_BETWEEN(HIREDATE, SYSDATE),2) AS MONTH1,
+       TRUNC(MONTHS_BETWEEN(SYSDATE, HIREDATE)) AS MONTH2
+FROM EMP;
+
+#달의 마지막 날짜 구하는 함수 (NEXT_DAY, LAST_DAY)
+SELECT SYSDATE, NEXT_DAY(SYSDATE, '월요일'), LAST_DAY(SYSDATE),
+       NEXT_DAY(NEXT_DAY(SYSDATE,'월요일'),'월요일')        
+FROM DUAL;
+
+#6-29 ROUND함수 사용하여 날짜 데이터 출력하기
+SELECT SYSDATE,
+       ROUND(SYSDATE,'CC') AS FORMAT_CC,
+       ROUND(SYSDATE, 'YYYY') AS FORMAT_YYYY,
+       ROUND(SYSDATE, 'Q') AS FORMAT_Q,
+       ROUND(SYSDATE, 'DDD') AS FORMAT_DDD,
+       ROUND(SYSDATE, 'HH') AS FORMAT_HH
+FROM DUAL;
+
+#프로그래밍과 직접관련된 자료형 변환함수 ( 중요 )
+
+#숫자와 문자열을 더하여 출력
+SELECT EMPNO, ENAME, EMPNO+'500' FROM EMP
+WHERE ENAME = 'KING';
+DESC EMP;
+
+#문자열과 숫자를 더하여 출력 ( 에러 )
+SELECT 'ABCD'+EMPNO, EMPNO, ENAME FROM EMP
+WHERE ENAME = 'KING';
+
+#형변환 함수 삼총사
+#★★★★★★★★★TO_CHAR, TO_NUMBER, TO_DATE ★★★★★★★★★
+
+#날짜 형식을 문자열로 출력하고 싶습니다.
+SELECT TO_CHAR(SYSDATE,'YYYY/MM/DD HH24:MI:SS') AS 현재시간 FROM DUAL;
+SELECT TO_CHAR(SYSDATE,'HH24:MI:SS') AS 현재시간 FROM DUAL;
+
+#월과 요일을 다양한 형식으로 출력하기
+#6-34 
+SELECT SYSDATE,
+       TO_CHAR(SYSDATE, 'MM'),
+       TO_CHAR(SYSDATE, 'MONTH'),
+       TO_CHAR(SYSDATE, 'DY'),
+       TO_CHAR(SYSDATE, 'DAY')
+FROM DUAL;
+
+#P160 여러 언어로 날짜(월) 출력하기
+SELECT SYSDATE,
+       TO_CHAR(SYSDATE, 'MON', 'NLS_DATE_LANGUAGE = JAPANESE') AS MON_JPN,
+       TO_CHAR(SYSDATE, 'MON', 'NLS_DATE_LANGUAGE = ENGLISH') AS MON_ENG,
+       TO_CHAR(SYSDATE, 'DAY', 'NLS_DATE_LANGUAGE = JAPANESE') AS DAY_JPN,
+       TO_CHAR(SYSDATE, 'DAY', 'NLS_DATE_LANGUAGE = ENGLISH') AS DAY_ENG
+FROM DUAL;
+
+#6-42 문자 데이터를 날짜 데이터로 변환하는 함수 TO_DATE
+SELECT TO_DATE('2018-07-14', 'YYYY-MM-DD') AS DATE1
+FROM DUAL;
+#문자열의 숫자타입으로 변환하려면 TO_NUMBER
+SELECT 1300-'1500', '1300'+1500 FROM DUAL;
+SELECT '1300' - '1500' FROM DUAL;
+
+#에러
+SELECT '1,300' - '1,500' FROM DUAL;
+#에러를 나지않게 하기위해서는?
+SELECT TO_NUMBER('1,300', '999,999') - TO_NUMBER('1,500', '999,999')
+FROM DUAL;
+
+#TO_CHAR, TO_NUMBER_ TO_DATE 꼭 기억!!
+#TO_CHAR 급여 출력
+SELECT TO_CHAR(SAL,'$999,999') AS 달러,
+       TO_CHAR(SAL,'L999,999') AS 원,
+       TO_CHAR(SAL,'$999,999.00') AS SAL1,
+       TO_CHAR(SAL,'000999999.99') AS SAL2,
+       TO_CHAR(SAL,'999,999.00') AS SAL3
+FROM EMP;
+#P313 데이터 정의어 --> CREATE
+DROP TABLE EMP_DDL;
+CREATE TABLE EMP_DDL (
+    EMPNO   NUMBER(4),
+    ENAME   VARCHAR2(10),
+    JOB     VARCHAR2(9)
+);
+SELECT * FROM EMP_DDL;
+INSERT INTO EMP_DDL(EMPNO,ENAME,JOB)
+VALUES (1000,'HAKSUKIM','DEVELOP');
+
+#파일 설정 COMMIT
+COMMIT;
+
+# Oracle과 C# 연동
+INSERT INTO PHONEBOOK(ID, NAME, HP) VALUES(5,'홍길동','010-1111-1111');
+
+SELECT * FROM PHONEBOOK;
+
+#NVL 함수 사용하기 NULL 변환
+SELECT EMPNO, ENAME, SAL,
+       NVL(COMM,0) AS COMM, SAL+NVL(COMM,0)
+FROM EMP;
+
+#NVL2 함수   ( 값이 있으면 O, 값이 NULL이면 X )
+SELECT EMPNO, ENAME, COMM, 
+       NVL2(COMM, '0', 'X'),
+       NVL2(COMM, SAL*12+COMM, SAL*12) AS 연봉
+FROM EMP;
+
+#DECODE 상황에 따라 다른 데이터를 반환하는 함수 
+#6-47
+SELECT EMPNO, ENAME, JOB, SAL,
+       DECODE(JOB, 'MANAGER', SAL*1.1, 
+                   'SALESMAN', SAL*1.05,      
+       SAL*1) AS UPSAL
+FROM EMP;
+
+# JOB이 'PRESIDENT'일 때 MGR * 8000
+SELECT DECODE(JOB,'PRESIDENT', MGR * 8000, 0) AS RESULT
+FROM EMP;
+
+#CASE문 
+SELECT EMPNO, ENAME, JOB, SAL,
+       CASE JOB
+            WHEN 'MANAGER' THEN SAL*1.1
+            WHEN 'SALESMAN' THEN SAL*1.05
+            ELSE SAL*1.03
+        END AS UPSAL
+FROM EMP;
+
+#기준 데이터 없이 조건식만으로 CASE문 사용하기
+#열 값에 따라서 출력 값이 달라지는 CASE
+SELECT EMPNO, ENAME, COMM,
+    CASE 
+        WHEN COMM IS NULL THEN '해당사항 없음'
+        WHEN COMM = 0 THEN '수당없음'
+        WHEN COMM > 0 THEN '수당 : ' || COMM
+    END AS COMM_TEXT
+FROM EMP;
+
+
+#174 ~ 175 연습문제
+
+﻿1. EMPNO 열에는 EMP 테이블에서 사원 이름(ENAME)이 다섯 글자 이상이며 여섯 글자 미만인 사원 정보를 
+   출력합니다. MASING_EMPNO 열에는 사원 번호(EMPNO) 앞 두 자리 외 뒷자리를 * 기호로 출력합니다. 
+   그리고 MASKING_ENAME 열에는 사원 이름의 첫글자만 보여주고 나머지 글자 수만큼 * 기호로 출력하세요.
+
+"EMPNO"	"MASKING_EMPNO"	"ENAME"	"MASKING_ENAME"
+7369	"73**"	"SMITH"	"S****"
+7499	"74**"	"ALLEN"	"A****"
+7566	"75**"	"JONES"	"J****"
+7698	"76**"	"BLAKE"	"B****"
+7782	"77**"	"CLARK"	"C****"
+7900	"79**"	"JAMES"	"J****"
+
+
+HINT) RPAD, SUBSTR
+
+2. 다음과 같은 결과가 나오도록 SQL문을 작성하세요.
+   EMP 테이블에서 사원들의 월 평균 근무일 수는 21.5일 입니다. 하루 근무 시간을 8시간으로 보았을 때 
+   사원들의 하루 급여(DAY_PAY)와 시급(TIME_PAY)을 계산하여 결과를 출력합니다.
+   단, 하루 급여는 소수점 세 번째 자리에서 버리고 시급은 두 번째 소수점 자리에서 반올림하세요.
+
+"EMPNO"	"ENAME"	"SAL"	"DAY_PAY"	"TIME_PAY"
+7369	"SMITH"	800	37.2	4.7
+7499	"ALLEN"	1600	74.41	9.3
+7521	"WARD"	1250	58.13	7.3
+7566	"JONES"	2975	138.37	17.3
+7654	"MARTIN"	1250	58.13	7.3
+7698	"BLAKE"	2850	132.55	16.6
+7782	"CLARK"	2450	113.95	14.2
+7839	"KING"	5000	232.55	29.1
+7844	"TURNER"	1500	69.76	8.7
+7900	"JAMES"	950	44.18	5.5
+7902	"FORD"	3000	139.53	17.4
+7934	"MILLER"	1300	60.46	7.6
+
+
+HINT) TRUNC, ROUND
+
+
+3. EMP 테이블에서 사원들의 입사일(HIREDATE)을 기준으로 3개월이 지난 후 첫 월요일에 정직원이 됩니다.
+   사언들이 정직원이 되는 날짜(R_JOB)를 YYYY-MM-DD 형식으로 출력해 주세요.
+   단, 추가 수당(COMM)이 없는 사원의 추가 수당은 N/A로 출력하세요.
+
+
+"EMPNO"	"ENAME"	"HIREDATE"	"R_JOB"	"COMM"
+7369	"SMITH"	80/12/17	"1981-03-23"	"N/A"
+7499	"ALLEN"	81/02/20	"1981-05-25"	"300"
+7521	"WARD"	81/02/22	"1981-05-25"	"500"
+7566	"JONES"	81/04/02	"1981-07-06"	"N/A"
+7654	"MARTIN"	81/09/28	"1982-01-04"	"1400"
+7698	"BLAKE"	81/05/01	"1981-08-03"	"N/A"
+7782	"CLARK"	81/06/09	"1981-09-14"	"N/A"
+7839	"KING"	81/11/17	"1982-02-22"	"N/A"
+7844	"TURNER"	81/09/08	"1981-12-14"	"0"
+7900	"JAMES"	81/12/03	"1982-03-08"	"N/A"
+7902	"FORD"	81/12/03	"1982-03-08"	"N/A"
+7934	"MILLER"	82/01/23	"1982-04-26"	"N/A"
+
+HINT) TO_CHAR, NEXT_DAY, ADD_MONTHS, NVL
+
+
+4. EMP 테이블의 모든 사원을 대상으로 직속 상관의 사원번호(MGR)를 다음과 같은 조건을 기준으로 변환해서
+
+  CHG_MGR 열에 출력하세요.
+
+  - 직속 상관의 사원 번호가 존재하지 않는 경우 : 0000
+  - 직속 상관의 사원 번호 앞 두 자리가 75일 경우 : 5555
+  - 직속 상관의 사원 번호 앞 두 자리가 76일 경우 : 6666
+  - 직속 상관의 사원 번호 앞 두 자리가 77일 경우 : 7777
+  - 직속 상관의 사원 번호 앞 두 자리가 78일 경우 : 8888 
+  - 그 외 직속 상관 사원 번호의 경우 : 본래 직속 상관의 사원 번호 그대로 출력
+
+"EMPNO"	"ENAME"	"MGR"	"CHG_MGR"
+7369	"SMITH"	7902	"0000"
+7499	"ALLEN"	7698	"6666"
+7521	"WARD"	7698	"6666"
+7566	"JONES"	7839	"8888"
+7654	"MARTIN"	7698	"6666"
+7698	"BLAKE"	7839	"8888"
+7782	"CLARK"	7839	"8888"
+7839	"KING"		"0000"
+7844	"TURNER"	7698	"6666"
+7900	"JAMES"	7698	"6666"
+7902	"FORD"	7566	"5555"
+7934	"MILLER"	7782	"7777"
+
+
+HINT) DECODE or CASE WHEN END
+
+1번 정답
+SELECT EMPNO, RPAD(RPAD(EMPNO,2),4,'*') AS MASING_EMPNO,
+       ENAME, RPAD(RPAD(ENAME,1),5,'*')
+FROM EMP
+WHERE LENGTH(ENAME) >= 5 AND LENGTH(ENAME) < 6;
+
+
+2번 정답
+SELECT EMPNO, ENAME, SAL, 
+       TRUNC(SAL/21.5,3) AS DAY_PAY,
+       ROUND((SAL/21.5)/8,2) AS TIME_PAY
+FROM EMP;
+
+
+3번 정답
+SELECT  EMPNO, ENAME, HIREDATE,
+        TO_CHAR(NEXT_DAY(ADD_MONTHS(HIREDATE,3),'월요일'),'YYYY-MM-DD') AS R_JOB,
+        CASE 
+            WHEN COMM IS NULL THEN 'N/A'
+            WHEN COMM IS NOT NULL THEN TO_CHAR(COMM)
+        END AS R_JOB
+FROM EMP;
+
+
+4번 정답
+SELECT EMPNO, ENAME, MGR,
+       CASE
+            WHEN MGR IS NULL THEN 0000
+            WHEN RPAD(MGR,2) = 75 THEN 5555
+            WHEN RPAD(MGR,2) = 76 THEN 6666
+            WHEN RPAD(MGR,2) = 77 THEN 7777
+            WHEN RPAD(MGR,2) = 78 THEN 8888
+            ELSE MGR
+        END AS CHG_MGR
+FROM EMP;
